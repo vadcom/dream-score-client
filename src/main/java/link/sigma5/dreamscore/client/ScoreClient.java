@@ -48,7 +48,9 @@ public class ScoreClient {
         Score scoreRecord = new Score().name(name).score(score);
         HttpClient httpClient = HttpClient.newHttpClient();
         HttpRequest httpRequest = HttpRequest.newBuilder(URI.create(url + "/" + applicationId + "/" + sectionId))
-                .POST(HttpRequest.BodyPublishers.ofString(scoreRecord.toString()))
+                .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(scoreRecord)))
+                .header("accept", "application/json")
+                .header("Content-Type", "application/json")
                 .build();
         // Send the request and retrieve the response
         HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
@@ -74,7 +76,7 @@ public class ScoreClient {
                 }
             });
         } else {
-            throw new RuntimeException("Error: " + httpResponse.statusCode());
+            throw new RuntimeException("Service error: " + httpResponse.statusCode());
         }
         return result;
     }
@@ -97,6 +99,7 @@ public class ScoreClient {
         HttpRequest httpRequest = HttpRequest.newBuilder(
                         URI.create(String.format(url + "/" + applicationId + "/" + sectionId + "?%s=%s&%s=%s",
                                 countToSkipName, countToSkip, countName, count)))
+                .header("accept", "application/json")
                 .GET()
                 .build();
         // Send the request and retrieve the response
