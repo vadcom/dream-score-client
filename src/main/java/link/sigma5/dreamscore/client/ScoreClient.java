@@ -18,7 +18,7 @@ import java.util.List;
  * Library for communication with DreamScore server
  */
 public class ScoreClient {
-    static final String TARGET_URL = "http://3.120.34.51:8080/score/v3";
+    static final String TARGET_URL = "http://dreamscore.sigma5.link:8080/score/v3";
 
     String url;
     String applicationId;
