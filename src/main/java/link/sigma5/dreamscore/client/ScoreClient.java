@@ -51,6 +51,7 @@ public class ScoreClient {
                 .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(scoreRecord)))
                 .header("accept", "application/json")
                 .header("Content-Type", "application/json")
+                .timeout(java.time.Duration.ofSeconds(5))
                 .build();
         // Send the request and retrieve the response
         HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
@@ -100,6 +101,7 @@ public class ScoreClient {
                         URI.create(String.format(url + "/" + applicationId + "/" + sectionId + "?%s=%s&%s=%s",
                                 countToSkipName, countToSkip, countName, count)))
                 .header("accept", "application/json")
+                .timeout(java.time.Duration.ofSeconds(5))
                 .GET()
                 .build();
         // Send the request and retrieve the response
