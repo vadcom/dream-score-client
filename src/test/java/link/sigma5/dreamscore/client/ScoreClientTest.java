@@ -1,6 +1,5 @@
 package link.sigma5.dreamscore.client;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -8,14 +7,17 @@ import java.io.IOException;
 import java.util.Random;
 
 class ScoreClientTest {
-
     String urlLocal = "http://localhost:8080/score/v3";
     String urlRemote = "http://dreamscore.sigma5.link:8080/score/v3";
     String url;
 
     @BeforeEach
     void before() {
-        url = urlRemote;
+        if ("remote".equals(System.getenv("profile"))) {
+            url = urlRemote;
+        } else {
+            url = urlLocal;
+        }
         System.out.println("Test configured for link: " + url);
     }
 
