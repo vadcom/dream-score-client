@@ -3,7 +3,6 @@ package link.sigma5.dreamscore.client;
 import java.util.Date;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.threeten.bp.OffsetDateTime;
 import javax.validation.Valid;
 
 /**
@@ -37,6 +36,8 @@ public class Score   {
   @JsonProperty("selected")
   private Boolean selected = false;
 
+  @JsonProperty("deviceId")
+  private String deviceId = null;
 
   public Score id(String id) {
     this.id = id;
@@ -141,6 +142,14 @@ public class Score   {
     this.subscription = subscription;
   }
 
+  public Score setDeviceId(String deviceId) {
+    this.deviceId = deviceId;
+    return this;
+  }
+
+  public String getDeviceId() {
+    return deviceId;
+  }
 
   @Override
   public boolean equals(Object o) {
@@ -150,18 +159,22 @@ public class Score   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Score score = (Score) o;
-    return Objects.equals(this.id, score.id) &&
-        Objects.equals(this.position, score.position) &&
-        Objects.equals(this.score, score.score) &&
-        Objects.equals(this.name, score.name) &&
-        Objects.equals(this.date, score.date) &&
-        Objects.equals(this.subscription, score.subscription);
+    Score scoreObject = (Score) o;
+    return Objects.equals(this.id, scoreObject.id) &&
+            Objects.equals(this.position, scoreObject.position) &&
+            Objects.equals(this.score, scoreObject.score) &&
+            Objects.equals(this.name, scoreObject.name) &&
+            Objects.equals(this.date, scoreObject.date) &&
+            Objects.equals(this.subscription, scoreObject.subscription) &&
+            Objects.equals(this.deviceId, scoreObject.deviceId) &&
+            Objects.equals(this.app, scoreObject.app) &&
+            Objects.equals(this.section, scoreObject.section) &&
+            Objects.equals(this.selected, scoreObject.selected);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, position, score, name, date, subscription);
+    return Objects.hash(id, position, score, name, date, subscription, deviceId, app, section, selected);
   }
 
   @Override
@@ -174,10 +187,11 @@ public class Score   {
     sb.append("    score: ").append(toIndentedString(score)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    date: ").append(toIndentedString(date)).append("\n");
-    sb.append("    subscriotin: ").append(toIndentedString(subscription)).append("\n");
+    sb.append("    subscription: ").append(toIndentedString(subscription)).append("\n");
     sb.append("    app: ").append(toIndentedString(app)).append("\n");
     sb.append("    section: ").append(toIndentedString(section)).append("\n");
     sb.append("    selected: ").append(toIndentedString(selected)).append("\n");
+    sb.append("    deviceId: ").append(toIndentedString(deviceId)).append("\n");
     sb.append("}");
     return sb.toString();
   }

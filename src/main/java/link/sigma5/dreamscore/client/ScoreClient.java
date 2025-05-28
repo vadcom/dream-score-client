@@ -22,17 +22,17 @@ public class ScoreClient {
 
     String url;
     String applicationId;
-    String sectionId;
+    String deviceId;
     ObjectMapper objectMapper = new ObjectMapper();
 
-    public ScoreClient(String applicationId, String sectionId) {
-        this(applicationId, sectionId, TARGET_URL);
+    public ScoreClient(String applicationId, String deviceId) {
+        this(applicationId, deviceId, TARGET_URL);
     }
 
-    public ScoreClient(String applicationId, String sectionId, String url) {
+    public ScoreClient(String applicationId, String deviceId, String url) {
         this.url = url;
         this.applicationId = applicationId;
-        this.sectionId = sectionId;
+        this.deviceId = deviceId;
     }
 
     /**
@@ -44,10 +44,10 @@ public class ScoreClient {
      * @throws IOException
      * @throws InterruptedException
      */
-    public List<Score> pushScore(String name, long score) throws IOException, InterruptedException {
-        Score scoreRecord = new Score().name(name).score(score);
+    public List<Score> pushScore(String sectionId, boolean localScore, String name, long score) throws IOException, InterruptedException {
+        Score scoreRecord = new Score().name(name).score(score).setDeviceId(deviceId);
         HttpClient httpClient = HttpClient.newHttpClient();
-        HttpRequest httpRequest = HttpRequest.newBuilder(URI.create(url + "/" + applicationId + "/" + sectionId))
+        HttpRequest httpRequest = HttpRequest.newBuilder(URI.create(url + "/" + applicationId + "/" + sectionId + getDeviceIdParameter(localScore)))
                 .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(scoreRecord)))
                 .header("accept", "application/json")
                 .header("Content-Type", "application/json")
@@ -89,7 +89,7 @@ public class ScoreClient {
      * @throws IOException
      * @throws InterruptedException
      */
-    public List<Score> pullScore(int page, int recordInPage) throws IOException, InterruptedException {
+    public List<Score> pullScore(String sectionId, boolean localScore, int page, int recordInPage) throws IOException, InterruptedException {
 
         String countToSkipName = URLEncoder.encode("positionToSkip", StandardCharsets.UTF_8);
         String countToSkip = URLEncoder.encode(String.valueOf(page * recordInPage), StandardCharsets.UTF_8);
@@ -99,7 +99,7 @@ public class ScoreClient {
         HttpClient httpClient = HttpClient.newHttpClient();
         HttpRequest httpRequest = HttpRequest.newBuilder(
                         URI.create(String.format(url + "/" + applicationId + "/" + sectionId + "?%s=%s&%s=%s",
-                                countToSkipName, countToSkip, countName, count)))
+                                countToSkipName, countToSkip, countName, count)+ getDeviceIdParameter(localScore)))
                 .header("accept", "application/json")
                 .timeout(java.time.Duration.ofSeconds(5))
                 .GET()
@@ -107,6 +107,10 @@ public class ScoreClient {
         // Send the request and retrieve the response
         HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
         return getScores(httpResponse);
+    }
+
+    private String getDeviceIdParameter(boolean localScore) {
+        return localScore ? "&deviceId=" + deviceId : "";
     }
 
 }
