@@ -12,6 +12,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -45,7 +46,7 @@ public class ScoreClient {
      * @throws InterruptedException
      */
     public List<Score> pushScore(String sectionId, boolean localScore, String name, long score) throws IOException, InterruptedException {
-        Score scoreRecord = new Score().name(name).score(score).setDeviceId(deviceId);
+        Score scoreRecord = new Score().name(name).score(score).date(new Date()).setDeviceId(deviceId);
         HttpClient httpClient = HttpClient.newHttpClient();
         HttpRequest httpRequest = HttpRequest.newBuilder(URI.create(url + "/" + applicationId + "/" + sectionId + getDeviceIdParameter(localScore)))
                 .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(scoreRecord)))
