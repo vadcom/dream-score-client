@@ -48,7 +48,7 @@ public class ScoreClient {
     public List<Score> pushScore(String sectionId, boolean localScore, String name, long score) throws IOException, InterruptedException {
         Score scoreRecord = new Score().name(name).score(score).date(new Date()).setDeviceId(deviceId);
         HttpClient httpClient = HttpClient.newHttpClient();
-        HttpRequest httpRequest = HttpRequest.newBuilder(URI.create(url + "/" + applicationId + "/" + sectionId + getDeviceIdParameter(localScore)))
+        HttpRequest httpRequest = HttpRequest.newBuilder(URI.create(url + "/" + applicationId + "/" + sectionId + getDeviceIdParameter(localScore, true)))
                 .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(scoreRecord)))
                 .header("accept", "application/json")
                 .header("Content-Type", "application/json")
@@ -100,7 +100,7 @@ public class ScoreClient {
         HttpClient httpClient = HttpClient.newHttpClient();
         HttpRequest httpRequest = HttpRequest.newBuilder(
                         URI.create(String.format(url + "/" + applicationId + "/" + sectionId + "?%s=%s&%s=%s",
-                                countToSkipName, countToSkip, countName, count)+ getDeviceIdParameter(localScore)))
+                                countToSkipName, countToSkip, countName, count)+ getDeviceIdParameter(localScore, false)))
                 .header("accept", "application/json")
                 .timeout(java.time.Duration.ofSeconds(5))
                 .GET()
@@ -110,8 +110,9 @@ public class ScoreClient {
         return getScores(httpResponse);
     }
 
-    private String getDeviceIdParameter(boolean localScore) {
-        return localScore ? "&deviceId=" + deviceId : "";
+    private String getDeviceIdParameter(boolean localScore, boolean firstParam) {
+        if (!localScore) return "";
+        return (firstParam ? "?" : "&") + "deviceId=" + deviceId;
     }
 
 }
