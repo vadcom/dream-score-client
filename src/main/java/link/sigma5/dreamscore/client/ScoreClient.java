@@ -45,8 +45,9 @@ public class ScoreClient {
      * @throws IOException
      * @throws InterruptedException
      */
-    public List<Score> pushScore(String sectionId, boolean localScore, String name, long score) throws IOException, InterruptedException {
+    public List<Score> pushScore(String sectionId, boolean localScore, String name, long score, int levels) throws IOException, InterruptedException {
         Score scoreRecord = new Score().name(name).score(score).date(new Date()).setDeviceId(deviceId);
+        scoreRecord.setLevels(levels);
         HttpClient httpClient = HttpClient.newHttpClient();
         HttpRequest httpRequest = HttpRequest.newBuilder(URI.create(url + "/" + applicationId + "/" + sectionId + getDeviceIdParameter(localScore, true)))
                 .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(scoreRecord)))

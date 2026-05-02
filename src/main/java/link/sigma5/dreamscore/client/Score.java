@@ -39,6 +39,17 @@ public class Score   {
   @JsonProperty("deviceId")
   private String deviceId = null;
 
+  @JsonProperty("levels")
+  private Integer levels = null;
+
+  public Integer getLevels() {
+    return levels;
+  }
+
+  public void setLevels(Integer levels) {
+    this.levels = levels;
+  }
+
   public Score id(String id) {
     this.id = id;
     return this;

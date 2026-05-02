@@ -45,7 +45,7 @@ class ScoreClientTest {
     void pushScore(boolean localScore) throws IOException, InterruptedException {
         Random random = new Random();
         ScoreClient scoreClient = new ScoreClient("test", TEST_DEVICE_ID, url);
-        List<Score> scores = scoreClient.pushScore("test", localScore, "Jon Doe", random.nextInt(1000));
+        List<Score> scores = scoreClient.pushScore("test", localScore, "Jon Doe", random.nextInt(1000), 3);
         scores.forEach(System.out::println);
         if (localScore) {
             scores.forEach(score -> assertEquals(TEST_DEVICE_ID, score.getDeviceId()));
