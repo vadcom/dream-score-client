@@ -1,7 +1,6 @@
 package link.sigma5.dreamscore.client;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -10,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
-@Disabled
 class ScoreClientTest {
     public static final String TEST_DEVICE_ID = "testDeviceID";
     String urlLocal = "http://localhost:8080/score/v3";

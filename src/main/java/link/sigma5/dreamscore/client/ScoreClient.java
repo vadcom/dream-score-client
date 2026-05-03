@@ -24,6 +24,7 @@ public class ScoreClient {
     String url;
     String applicationId;
     String deviceId;
+    String apiToken;
     ObjectMapper objectMapper = new ObjectMapper();
 
     public ScoreClient(String applicationId, String deviceId) {
@@ -31,9 +32,14 @@ public class ScoreClient {
     }
 
     public ScoreClient(String applicationId, String deviceId, String url) {
+        this(applicationId, deviceId, url, null);
+    }
+
+    public ScoreClient(String applicationId, String deviceId, String url, String apiToken) {
         this.url = url;
         this.applicationId = applicationId;
         this.deviceId = deviceId;
+        this.apiToken = apiToken;
     }
 
     /**
@@ -49,12 +55,13 @@ public class ScoreClient {
         Score scoreRecord = new Score().name(name).score(score).date(new Date()).setDeviceId(deviceId);
         scoreRecord.setLevels(levels);
         HttpClient httpClient = HttpClient.newHttpClient();
-        HttpRequest httpRequest = HttpRequest.newBuilder(URI.create(url + "/" + applicationId + "/" + sectionId + getDeviceIdParameter(localScore, true)))
+        HttpRequest.Builder pushBuilder = HttpRequest.newBuilder(URI.create(url + "/" + applicationId + "/" + sectionId + getDeviceIdParameter(localScore, true)))
                 .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(scoreRecord)))
                 .header("accept", "application/json")
                 .header("Content-Type", "application/json")
-                .timeout(java.time.Duration.ofSeconds(5))
-                .build();
+                .timeout(java.time.Duration.ofSeconds(5));
+        if (apiToken != null) pushBuilder.header("X-Api-Token", apiToken);
+        HttpRequest httpRequest = pushBuilder.build();
         // Send the request and retrieve the response
         HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
         return getScores(httpResponse);
@@ -99,13 +106,14 @@ public class ScoreClient {
         String count = URLEncoder.encode(String.valueOf(recordInPage), StandardCharsets.UTF_8);
 
         HttpClient httpClient = HttpClient.newHttpClient();
-        HttpRequest httpRequest = HttpRequest.newBuilder(
+        HttpRequest.Builder pullBuilder = HttpRequest.newBuilder(
                         URI.create(String.format(url + "/" + applicationId + "/" + sectionId + "?%s=%s&%s=%s",
                                 countToSkipName, countToSkip, countName, count)+ getDeviceIdParameter(localScore, false)))
                 .header("accept", "application/json")
                 .timeout(java.time.Duration.ofSeconds(5))
-                .GET()
-                .build();
+                .GET();
+        if (apiToken != null) pullBuilder.header("X-Api-Token", apiToken);
+        HttpRequest httpRequest = pullBuilder.build();
         // Send the request and retrieve the response
         HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
         return getScores(httpResponse);
